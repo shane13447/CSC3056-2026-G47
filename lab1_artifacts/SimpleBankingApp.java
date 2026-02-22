@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Vector;
 
+import controller.AccountController;
 import model.Account;
 import model.Transaction;
 import model.User;
@@ -73,7 +74,7 @@ public class SimpleBankingApp {
 		System.out.println("--------------------------------------------------------------------------------");
 		
 		for  (int i = 0; i < accounts.size(); i++) 
-            System.out.println(accounts.get(i).toString() + "| $" + getBalance(accounts.get(i).getAccount_number()));
+            System.out.println(accounts.get(i).toString() + "| $" + AccountController.getBalance(transactions, accounts.get(i).getAccount_number()));
 		
 		System.out.println();
 	}
