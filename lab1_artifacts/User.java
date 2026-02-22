@@ -9,7 +9,7 @@ public class User {
 
 	public User(String username, String password, String first_name, String last_name, String mobile_number) {
 		this.username = username;
-	//	this.password = password;   // injected intentional defect: line is commented
+		this.password = password;   //reverted back
 
 		this.first_name = first_name;
 		this.last_name = last_name;
