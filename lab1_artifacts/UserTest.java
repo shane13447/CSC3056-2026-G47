@@ -21,13 +21,11 @@ public class UserTest {
         System.out.println("Starting the assertions of the test method: testUserConstructor");
 
         // if-else verification
-        // injected defect: "==" was intentionally changed to "!="
-        if (testUser.getUsername() != test_username)
+        if (testUser.getUsername() == test_username)
             TestUtils.printTestPassed("TC1-getUsername");
         else
             TestUtils.printTestFailed("TC1-getUsername");
 
-        TestUtils.printTestFailed("TC1-getUsername");
 
         if (testUser.getPassword() == test_password)
             TestUtils.printTestPassed("TC2-getPassword");
