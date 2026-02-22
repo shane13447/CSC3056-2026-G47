@@ -21,10 +21,13 @@ public class UserTest {
         System.out.println("Starting the assertions of the test method: testUserConstructor");
 
         // if-else verification
-        if (testUser.getUsername() == test_username)
+        // injected defect: "==" was intentionally changed to "!="
+        if (testUser.getUsername() != test_username)
             TestUtils.printTestPassed("TC1-getUsername");
         else
             TestUtils.printTestFailed("TC1-getUsername");
+
+        TestUtils.printTestFailed("TC1-getUsername");
 
         if (testUser.getPassword() == test_password)
             TestUtils.printTestPassed("TC2-getPassword");
@@ -46,6 +49,14 @@ public class UserTest {
         else
             TestUtils.printTestFailed("TC5-getMobile_number");
 
+        // TODO5: Java assert verification (run with -ea to enable)
+        assert testUser.getUsername() == test_username;
+        assert testUser.getPassword() == test_password;
+        assert testUser.getFirst_name() == test_first_name;
+        assert testUser.getLast_name() == test_last_name;
+        assert testUser.getMobile_number() == test_mobile_number;
+
+        System.out.println("All Java assertions in the test suite passed (none failed).");
         // 4-Teardown: none
     }
 
