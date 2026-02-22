@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Vector;
 
 import controller.AccountController;
+import controller.UserController;
 import model.Account;
 import model.Transaction;
 import model.User;
@@ -17,18 +18,7 @@ public class SimpleBankingApp {
 	public static Vector<Transaction> transactions =  new Vector<Transaction>();
 	
 	public static void loadUserData() {
-		// structure of each record: username (email address), password, first_name, last_name, mobile_number
-		
-		// in the ideal case (real deployment of the app), we will read from file or database, but let's hard-code for now
-		User aUser = new User("mike", "my_passwd", "Mike", "Smith", "07771234567");
-		users.add(aUser);
-		
-		aUser = new User("james.cameron@gmail.com", "angel", "James", "Cameron",  "07777654321");
-		users.add(aUser);
-		
-		aUser = new User("julia.roberts@gmail.com", "change_me",   "Julia", "roberts",   "07770123456");
-		users.add(aUser); 
-		
+		UserController.loadUserData(users);
 	}
 	
 	public static void printAllUsers() {
