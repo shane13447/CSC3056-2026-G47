@@ -48,6 +48,9 @@ public class SimpleBankingApp {
 	}
 	
 	public static void addTransaction(String account_number, double amount) {
+		if (!AccountController.accountExists(accounts, account_number))
+			throw new IllegalArgumentException("Account does not exist: " + account_number);
+
 		if (amount == 0)
 			throw new IllegalArgumentException("Transaction amount cannot be zero.");
 
@@ -64,6 +67,9 @@ public class SimpleBankingApp {
 	 * @return A double value, being the balance of the account
 	 */
 	public static double getBalance(String account_number) {
+		if (!AccountController.accountExists(accounts, account_number))
+			throw new IllegalArgumentException("Account does not exist: " + account_number);
+
 		double balance = 0;
 		for (int i = 0; i < transactions.size(); i++) {
 			Transaction aTransaction = transactions.get(i);
@@ -96,8 +102,7 @@ public class SimpleBankingApp {
 		
 		// and some more activities on the accounts
 		addTransaction("5495-1234", 520.00);
-		addTransaction("9999-1111", 21.00); // it seems this account does not exist in the loaded (populated) data, 
-											// but the addTransaction does not do that check, need to improve that function in future
+		addTransaction("5495-1291", 21.00);
 		// let's print the accounts and their balance to see if the above transaction have impacted their balances
 		System.out.println("Account: after the 2nd/3rd addTransaction function calls...");
 		printAllAccounts();
