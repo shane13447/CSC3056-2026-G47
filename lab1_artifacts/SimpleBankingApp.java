@@ -47,7 +47,10 @@ public class SimpleBankingApp {
 		System.out.println();
 	}
 	
-	public static void addTransaction(String account_number, double amount) { 
+	public static void addTransaction(String account_number, double amount) {
+		if (amount == 0)
+			throw new IllegalArgumentException("Transaction amount cannot be zero.");
+
 		Transaction aTransaction =  new Transaction(account_number, amount, Calendar.getInstance().getTime());
 		transactions.add(aTransaction);
 	}
