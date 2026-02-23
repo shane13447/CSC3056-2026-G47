@@ -79,8 +79,19 @@ public class SimpleBankingApp {
 		}
 		return balance;
 	}
-	
-	
+
+	public static double getUserTotalBalance(String username) {
+		double totalBalance = 0;
+		for (int i = 0; i < accounts.size(); i++) {
+			Account anAccount = accounts.get(i);
+			if (anAccount.getUsername_of_account_holder().equals(username)) {
+				totalBalance += getBalance(anAccount.getAccount_number());
+			}
+		}
+		return totalBalance;
+	}
+
+
 	//////////////////////////////////////////////////////
 	public static void main(String[] args) {
 		
