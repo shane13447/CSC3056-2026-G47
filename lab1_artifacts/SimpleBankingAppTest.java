@@ -113,12 +113,50 @@ public class SimpleBankingAppTest {
 			System.out.println(TestUtils.TEXT_COLOR_RED + "testRejectZeroTransactions: TC1 FAILED XXX: zero transaction was not rejected" + TestUtils.TEXT_COLOR_RESET);
 	}
 
+	public static void testRejectTransactionForUnknownAccount() {
+		int transactionCountBefore = SimpleBankingApp.transactions.size();
+		boolean exceptionThrown = false;
+
+		try {
+			SimpleBankingApp.addTransaction("9999-1111", 15.0);
+		} catch (IllegalArgumentException e) {
+			exceptionThrown = true;
+		}
+
+		int transactionCountAfter = SimpleBankingApp.transactions.size();
+
+		assert exceptionThrown;
+		assert transactionCountBefore == transactionCountAfter;
+		if (exceptionThrown && transactionCountBefore == transactionCountAfter)
+			System.out.println(TestUtils.TEXT_COLOR_GREEN + "testRejectTransactionForUnknownAccount: TC1 passed" + TestUtils.TEXT_COLOR_RESET);
+		else
+			System.out.println(TestUtils.TEXT_COLOR_RED + "testRejectTransactionForUnknownAccount: TC1 FAILED XXX: unknown account transaction was accepted" + TestUtils.TEXT_COLOR_RESET);
+	}
+
+	public static void testRejectBalanceForUnknownAccount() {
+		boolean exceptionThrown = false;
+
+		try {
+			SimpleBankingApp.getBalance("9999-1111");
+		} catch (IllegalArgumentException e) {
+			exceptionThrown = true;
+		}
+
+		assert exceptionThrown;
+		if (exceptionThrown)
+			System.out.println(TestUtils.TEXT_COLOR_GREEN + "testRejectBalanceForUnknownAccount: TC1 passed" + TestUtils.TEXT_COLOR_RESET);
+		else
+			System.out.println(TestUtils.TEXT_COLOR_RED + "testRejectBalanceForUnknownAccount: TC1 FAILED XXX: unknown account balance was accepted" + TestUtils.TEXT_COLOR_RESET);
+	}
+
 	public static void main(String[] args) {
 		// we need to call our test cases (methods)
 		testLoadData();
 		testDeposits();
 		testWithdrawals();
 		testRejectZeroTransactions();
+		testRejectTransactionForUnknownAccount();
+		testRejectBalanceForUnknownAccount();
 	}
 
 }
