@@ -149,6 +149,22 @@ public class SimpleBankingAppTest {
 			System.out.println(TestUtils.TEXT_COLOR_RED + "testRejectBalanceForUnknownAccount: TC1 FAILED XXX: unknown account balance was accepted" + TestUtils.TEXT_COLOR_RESET);
 	}
 
+	public static void testGetUserTotalBalance() {
+		double expectedBalance = SimpleBankingApp.getBalance("5495-1234")
+				+ SimpleBankingApp.getBalance("5495-1239")
+				+ SimpleBankingApp.getBalance("5495-1291");
+		double actualBalance = SimpleBankingApp.getUserTotalBalance("mike");
+
+		assert expectedBalance == actualBalance;
+		if (expectedBalance == actualBalance)
+			System.out.println(TestUtils.TEXT_COLOR_GREEN + "testGetUserTotalBalance: TC1 passed" + TestUtils.TEXT_COLOR_RESET);
+		else {
+			System.out.println(TestUtils.TEXT_COLOR_RED + "testGetUserTotalBalance: TC1 FAILED XXX: expected user total does not match");
+			System.out.format("testGetUserTotalBalance: expectedBalance = %.2f ; actualBalance = %.2f %s\n",
+					expectedBalance, actualBalance, TestUtils.TEXT_COLOR_RESET);
+		}
+	}
+
 	public static void main(String[] args) {
 		// we need to call our test cases (methods)
 		testLoadData();
@@ -157,6 +173,7 @@ public class SimpleBankingAppTest {
 		testRejectZeroTransactions();
 		testRejectTransactionForUnknownAccount();
 		testRejectBalanceForUnknownAccount();
+		testGetUserTotalBalance();
 	}
 
 }
