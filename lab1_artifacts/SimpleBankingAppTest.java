@@ -89,12 +89,36 @@ public class SimpleBankingAppTest {
 		// 4-tear-down: put the system state back in where it was
 		SimpleBankingApp.addTransaction("5495-1234", withdrawalAmount);
 	}
-	
+
+	public static void testRejectZeroTransactions() {
+		int transactionCountBefore = SimpleBankingApp.transactions.size();
+		double balanceBefore = SimpleBankingApp.getBalance("5495-1234");
+		boolean exceptionThrown = false;
+
+		try {
+			SimpleBankingApp.addTransaction("5495-1234", 0);
+		} catch (IllegalArgumentException e) {
+			exceptionThrown = true;
+		}
+
+		double balanceAfter = SimpleBankingApp.getBalance("5495-1234");
+		int transactionCountAfter = SimpleBankingApp.transactions.size();
+
+		assert exceptionThrown;
+		assert balanceBefore == balanceAfter;
+		assert transactionCountBefore == transactionCountAfter;
+		if (exceptionThrown && balanceBefore == balanceAfter && transactionCountBefore == transactionCountAfter)
+			System.out.println(TestUtils.TEXT_COLOR_GREEN + "testRejectZeroTransactions: TC1 passed" + TestUtils.TEXT_COLOR_RESET);
+		else
+			System.out.println(TestUtils.TEXT_COLOR_RED + "testRejectZeroTransactions: TC1 FAILED XXX: zero transaction was not rejected" + TestUtils.TEXT_COLOR_RESET);
+	}
+
 	public static void main(String[] args) {
 		// we need to call our test cases (methods)
 		testLoadData();
 		testDeposits();
 		testWithdrawals();
+		testRejectZeroTransactions();
 	}
 
 }
