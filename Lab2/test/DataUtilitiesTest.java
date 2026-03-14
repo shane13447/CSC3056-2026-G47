@@ -1,4 +1,5 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.jfree.data.DataUtilities;
 import org.jfree.data.DefaultKeyedValues;
@@ -26,353 +27,255 @@ public class DataUtilitiesTest {
         values2D = null;
     }
 
-
     // Tests for calculateColumnTotal
 
-
     @Test
-    public void testCalculateColumnTotalValidDataAndColumnZero() {
-        assertEquals("Wrong sum returned. It should be 5.0",
-                5.0, DataUtilities.calculateColumnTotal(values2D, 0), 0.0000001d);
-    }
-
-    @Test
-    public void testCalculateColumnTotalValidDataMultipleColumns() {
+    public void calculateColumnTotalShouldReturnSumForValidColumn() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
-        data.addValue(7.5, "R0", "C0");
-        data.addValue(2.5, "R1", "C0");
-        data.addValue(5.0, "R0", "C1");
-        data.addValue(3.0, "R1", "C1");
+        data.addValue(1.0, "R1", "C1");
+        data.addValue(2.0, "R2", "C1");
+        data.addValue(3.0, "R1", "C2");
 
-        assertEquals("Column 1 sum should be 8.0",
-                8.0, DataUtilities.calculateColumnTotal(data, 1), 0.0000001d);
+        double total = DataUtilities.calculateColumnTotal(data, 0);
+
+        assertEquals(3.0, total, 0.0000001);
     }
 
     @Test
-    public void testCalculateColumnTotalWithNegativeValues() {
+    public void calculateColumnTotalShouldIgnoreNullCells() {
+        DefaultKeyedValues2D data = new DefaultKeyedValues2D();
+        data.addValue(1.0, "R1", "C1");
+        data.addValue(null, "R2", "C1");
+
+        double total = DataUtilities.calculateColumnTotal(data, 0);
+
+        assertEquals(1.0, total, 0.0000001);
+    }
+
+    @Test
+    public void calculateColumnTotalShouldReturnZeroForOutOfRangeColumn() {
+        DefaultKeyedValues2D data = new DefaultKeyedValues2D();
+        data.addValue(1.0, "R1", "C1");
+
+        double total = DataUtilities.calculateColumnTotal(data, 10);
+
+        assertEquals(0.0, total, 0.0000001);
+    }
+
+    @Test
+    public void calculateColumnTotalShouldReturnZeroForNegativeColumn() {
+        double total = DataUtilities.calculateColumnTotal(values2D, -1);
+
+        assertEquals(0.0, total, 0.0000001);
+    }
+
+    @Test
+    public void calculateColumnTotalShouldHandleNegativeValues() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
         data.addValue(-3.5, "R0", "C0");
         data.addValue(1.5, "R1", "C0");
 
-        assertEquals("Sum of column with negatives should be -2.0",
-                -2.0, DataUtilities.calculateColumnTotal(data, 0), 0.0000001d);
+        double total = DataUtilities.calculateColumnTotal(data, 0);
+
+        assertEquals(-2.0, total, 0.0000001);
     }
 
     @Test
-    public void testCalculateColumnTotalOutOfRangeColumnIndex() {
-        try {
-            double result = DataUtilities.calculateColumnTotal(values2D, 10);
-            assertEquals("Out-of-range column should return 0.0",
-                    0.0, result, 0.0000001d);
-        } catch (Exception e) {
-            fail("SUT threw " + e.getClass().getName()
-                    + " for out-of-range column index instead of returning 0.0");
-        }
-    }
-
-    @Test
-    public void testCalculateColumnTotalNegativeColumnIndex() {
-        try {
-            double result = DataUtilities.calculateColumnTotal(values2D, -1);
-            assertEquals("Negative column index should return 0.0",
-                    0.0, result, 0.0000001d);
-        } catch (Exception e) {
-            fail("SUT threw " + e.getClass().getName()
-                    + " for negative column index instead of returning 0.0");
-        }
-    }
-
-    @Test
-    public void testCalculateColumnTotalNullData() {
-        try {
-            DataUtilities.calculateColumnTotal(null, 0);
-            fail("No exception thrown. The expected outcome was: a thrown "
-                    + "exception of type: IllegalArgumentException");
-        } catch (Exception e) {
-            assertTrue("Incorrect exception type thrown",
-                    e.getClass().equals(IllegalArgumentException.class));
-        }
-    }
-
-    @Test
-    public void testCalculateColumnTotalSingleRowTable() {
+    public void calculateColumnTotalShouldHandleSingleRow() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
         data.addValue(9.5, "R0", "C0");
 
-        assertEquals("Single row column total should be 9.5",
-                9.5, DataUtilities.calculateColumnTotal(data, 0), 0.0000001d);
+        double total = DataUtilities.calculateColumnTotal(data, 0);
+
+        assertEquals(9.5, total, 0.0000001);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void calculateColumnTotalShouldThrowWhenDataIsNull() {
+        DataUtilities.calculateColumnTotal(null, 0);
+    }
 
     // Tests for calculateRowTotal
 
-
     @Test
-    public void testCalculateRowTotalValidDataAndRowZero() {
+    public void calculateRowTotalShouldReturnSumForValidRow() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
-        data.addValue(1.5, "R0", "C0");
-        data.addValue(2.5, "R0", "C1");
-        data.addValue(7.0, "R1", "C0");
+        data.addValue(1.5, "R1", "C1");
+        data.addValue(2.5, "R1", "C2");
+        data.addValue(7.0, "R2", "C1");
 
-        assertEquals("Row 0 total should be 4.0",
-                4.0, DataUtilities.calculateRowTotal(data, 0), 0.0000001d);
+        double total = DataUtilities.calculateRowTotal(data, 0);
+
+        assertEquals(4.0, total, 0.0000001);
     }
 
     @Test
-    public void testCalculateRowTotalValidDataMultipleColumns() {
+    public void calculateRowTotalShouldIgnoreNullCells() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
-        data.addValue(3.0, "R0", "C0");
-        data.addValue(4.0, "R0", "C1");
-        data.addValue(5.0, "R0", "C2");
+        data.addValue(2.5, "R1", "C1");
+        data.addValue(null, "R1", "C2");
 
-        assertEquals("Row 0 total should be 12.0",
-                12.0, DataUtilities.calculateRowTotal(data, 0), 0.0000001d);
+        double total = DataUtilities.calculateRowTotal(data, 0);
+
+        assertEquals(2.5, total, 0.0000001);
     }
 
     @Test
-    public void testCalculateRowTotalWithNegativeValues() {
+    public void calculateRowTotalShouldReturnZeroForOutOfRangeRow() {
+        DefaultKeyedValues2D data = new DefaultKeyedValues2D();
+        data.addValue(1.0, "R1", "C1");
+
+        double total = DataUtilities.calculateRowTotal(data, 10);
+
+        assertEquals(0.0, total, 0.0000001);
+    }
+
+    @Test
+    public void calculateRowTotalShouldReturnZeroForNegativeRow() {
+        double total = DataUtilities.calculateRowTotal(values2D, -1);
+
+        assertEquals(0.0, total, 0.0000001);
+    }
+
+    @Test
+    public void calculateRowTotalShouldHandleNegativeValues() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
         data.addValue(-2.0, "R0", "C0");
         data.addValue(-3.0, "R0", "C1");
 
-        assertEquals("Row total with negatives should be -5.0",
-                -5.0, DataUtilities.calculateRowTotal(data, 0), 0.0000001d);
+        double total = DataUtilities.calculateRowTotal(data, 0);
+
+        assertEquals(-5.0, total, 0.0000001);
     }
 
     @Test
-    public void testCalculateRowTotalOutOfRangeRowIndex() {
-        try {
-            double result = DataUtilities.calculateRowTotal(values2D, 10);
-            assertEquals("Out-of-range row should return 0.0",
-                    0.0, result, 0.0000001d);
-        } catch (Exception e) {
-            fail("SUT threw " + e.getClass().getName()
-                    + " for out-of-range row index instead of returning 0.0");
-        }
-    }
-
-    @Test
-    public void testCalculateRowTotalNegativeRowIndex() {
-        try {
-            double result = DataUtilities.calculateRowTotal(values2D, -1);
-            assertEquals("Negative row index should return 0.0",
-                    0.0, result, 0.0000001d);
-        } catch (Exception e) {
-            fail("SUT threw " + e.getClass().getName()
-                    + " for negative row index instead of returning 0.0");
-        }
-    }
-
-    @Test
-    public void testCalculateRowTotalNullData() {
-        try {
-            DataUtilities.calculateRowTotal(null, 0);
-            fail("No exception thrown. The expected outcome was: a thrown "
-                    + "exception of type: IllegalArgumentException");
-        } catch (Exception e) {
-            assertTrue("Incorrect exception type thrown",
-                    e.getClass().equals(IllegalArgumentException.class));
-        }
-    }
-
-    @Test
-    public void testCalculateRowTotalSingleColumnTable() {
+    public void calculateRowTotalShouldHandleSingleColumn() {
         DefaultKeyedValues2D data = new DefaultKeyedValues2D();
         data.addValue(6.0, "R0", "C0");
 
-        assertEquals("Single column row total should be 6.0",
-                6.0, DataUtilities.calculateRowTotal(data, 0), 0.0000001d);
+        double total = DataUtilities.calculateRowTotal(data, 0);
+
+        assertEquals(6.0, total, 0.0000001);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void calculateRowTotalShouldThrowWhenDataIsNull() {
+        DataUtilities.calculateRowTotal(null, 0);
+    }
 
     // Tests for createNumberArray
 
-
     @Test
-    public void testCreateNumberArrayValidPositiveData() {
-        double[] data = {1.0, 2.5, 3.75};
-        Number[] result = DataUtilities.createNumberArray(data);
+    public void createNumberArrayShouldConvertPrimitiveArrayToNumberArray() {
+        double[] input = new double[] {1.0, -2.5, 3.25};
 
-        assertEquals("Array length should be 3", 3, result.length);
-        assertNotNull("Element 0 should not be null", result[0]);
-        assertEquals("Element 0 should be 1.0", 1.0, result[0].doubleValue(), 0.0000001d);
-        assertNotNull("Element 1 should not be null", result[1]);
-        assertEquals("Element 1 should be 2.5", 2.5, result[1].doubleValue(), 0.0000001d);
-        assertNotNull("Element 2 should not be null", result[2]);
-        assertEquals("Element 2 should be 3.75", 3.75, result[2].doubleValue(), 0.0000001d);
+        Number[] numbers = DataUtilities.createNumberArray(input);
+
+        assertArrayEquals(new Number[] {1.0, -2.5, 3.25}, numbers);
     }
 
     @Test
-    public void testCreateNumberArrayWithNegativeValues() {
-        double[] data = {-1.0, -2.5, 0.0};
-        Number[] result = DataUtilities.createNumberArray(data);
+    public void createNumberArrayShouldPreserveSingleElementInput() {
+        double[] input = new double[] {42.0};
 
-        assertNotNull("Element 0 should not be null", result[0]);
-        assertEquals("Element 0 should be -1.0", -1.0, result[0].doubleValue(), 0.0000001d);
-        assertNotNull("Element 1 should not be null", result[1]);
-        assertEquals("Element 1 should be -2.5", -2.5, result[1].doubleValue(), 0.0000001d);
-        assertNotNull("Element 2 should not be null", result[2]);
-        assertEquals("Element 2 should be 0.0", 0.0, result[2].doubleValue(), 0.0000001d);
+        Number[] numbers = DataUtilities.createNumberArray(input);
+
+        assertArrayEquals(new Number[] {42.0}, numbers);
     }
 
     @Test
-    public void testCreateNumberArrayEmptyArray() {
-        double[] data = {};
-        Number[] result = DataUtilities.createNumberArray(data);
+    public void createNumberArrayShouldHandleEmptyArray() {
+        Number[] numbers = DataUtilities.createNumberArray(new double[] {});
 
-        assertEquals("Empty input should return empty array", 0, result.length);
+        assertEquals(0, numbers.length);
     }
 
-    @Test
-    public void testCreateNumberArraySingleElement() {
-        double[] data = {42.0};
-        Number[] result = DataUtilities.createNumberArray(data);
-
-        assertEquals("Array length should be 1", 1, result.length);
-        assertNotNull("Element 0 should not be null", result[0]);
-        assertEquals("Element 0 should be 42.0", 42.0, result[0].doubleValue(), 0.0000001d);
+    @Test(expected = IllegalArgumentException.class)
+    public void createNumberArrayShouldThrowWhenInputIsNull() {
+        DataUtilities.createNumberArray(null);
     }
-
-    @Test
-    public void testCreateNumberArrayNullInput() {
-        try {
-            DataUtilities.createNumberArray(null);
-            fail("No exception thrown. The expected outcome was: a thrown "
-                    + "exception of type: IllegalArgumentException");
-        } catch (Exception e) {
-            assertTrue("Incorrect exception type thrown",
-                    e.getClass().equals(IllegalArgumentException.class));
-        }
-    }
-
 
     // Tests for createNumberArray2D
 
-
     @Test
-    public void testCreateNumberArray2DValidData() {
-        double[][] data = {{1.0, 2.0}, {3.0, 4.0}};
-        Number[][] result = DataUtilities.createNumberArray2D(data);
+    public void createNumberArray2DShouldConvertPrimitive2DArrayToNumber2DArray() {
+        double[][] input = new double[][] {
+            {1.0, 2.0},
+            {-3.5, 4.5}
+        };
 
-        assertEquals("Row count should be 2", 2, result.length);
-        assertEquals("Row 0 col count should be 2", 2, result[0].length);
-        assertNotNull("Element [0][0] should not be null", result[0][0]);
-        assertEquals("Element [0][0] should be 1.0", 1.0, result[0][0].doubleValue(), 0.0000001d);
-        assertNotNull("Element [1][1] should not be null", result[1][1]);
-        assertEquals("Element [1][1] should be 4.0", 4.0, result[1][1].doubleValue(), 0.0000001d);
+        Number[][] numbers = DataUtilities.createNumberArray2D(input);
+
+        assertEquals(2, numbers.length);
+        assertArrayEquals(new Number[] {1.0, 2.0}, numbers[0]);
+        assertArrayEquals(new Number[] {-3.5, 4.5}, numbers[1]);
     }
 
     @Test
-    public void testCreateNumberArray2DWithNegativeValues() {
-        double[][] data = {{-1.5, 2.5}, {-3.5, 4.5}};
-        Number[][] result = DataUtilities.createNumberArray2D(data);
+    public void createNumberArray2DShouldPreserveRowLengths() {
+        double[][] input = new double[][] {
+            {1.0},
+            {2.0, 3.0}
+        };
 
-        assertNotNull("Element [0][0] should not be null", result[0][0]);
-        assertEquals("Element [0][0] should be -1.5", -1.5, result[0][0].doubleValue(), 0.0000001d);
-        assertNotNull("Element [0][1] should not be null", result[0][1]);
-        assertEquals("Element [0][1] should be 2.5", 2.5, result[0][1].doubleValue(), 0.0000001d);
+        Number[][] numbers = DataUtilities.createNumberArray2D(input);
+
+        assertEquals(1, numbers[0].length);
+        assertEquals(2, numbers[1].length);
     }
 
     @Test
-    public void testCreateNumberArray2DSingleRow() {
-        double[][] data = {{5.0, 10.0, 15.0}};
-        Number[][] result = DataUtilities.createNumberArray2D(data);
+    public void createNumberArray2DShouldHandleEmptyArray() {
+        Number[][] numbers = DataUtilities.createNumberArray2D(new double[][] {});
 
-        assertEquals("Row count should be 1", 1, result.length);
-        assertEquals("Column count should be 3", 3, result[0].length);
-        assertNotNull("Element [0][2] should not be null", result[0][2]);
-        assertEquals("Element [0][2] should be 15.0", 15.0, result[0][2].doubleValue(), 0.0000001d);
+        assertEquals(0, numbers.length);
     }
 
-    @Test
-    public void testCreateNumberArray2DEmptyArray() {
-        double[][] data = {};
-        Number[][] result = DataUtilities.createNumberArray2D(data);
-
-        assertEquals("Empty input should return empty 2D array", 0, result.length);
+    @Test(expected = IllegalArgumentException.class)
+    public void createNumberArray2DShouldThrowWhenInputIsNull() {
+        DataUtilities.createNumberArray2D(null);
     }
-
-    @Test
-    public void testCreateNumberArray2DNullInput() {
-        try {
-            DataUtilities.createNumberArray2D(null);
-            fail("No exception thrown. The expected outcome was: a thrown "
-                    + "exception of type: IllegalArgumentException");
-        } catch (Exception e) {
-            assertTrue("Incorrect exception type thrown",
-                    e.getClass().equals(IllegalArgumentException.class));
-        }
-    }
-
 
     // Tests for getCumulativePercentages
 
-
     @Test
-    public void testGetCumulativePercentagesJavadocExample() {
+    public void getCumulativePercentagesShouldMatchJavadocExample() {
         DefaultKeyedValues data = new DefaultKeyedValues();
-        data.addValue((Comparable) 0, 5.0);
-        data.addValue((Comparable) 1, 9.0);
-        data.addValue((Comparable) 2, 2.0);
+        data.addValue("A", 5.0);
+        data.addValue("B", 9.0);
+        data.addValue("C", 2.0);
 
         KeyedValues result = DataUtilities.getCumulativePercentages(data);
 
-        assertEquals("Key 0 cumulative % should be 0.3125",
-                0.3125, result.getValue(0).doubleValue(), 0.0000001d);
-        assertEquals("Key 1 cumulative % should be 0.875",
-                0.875, result.getValue(1).doubleValue(), 0.0000001d);
-        assertEquals("Key 2 cumulative % should be 1.0",
-                1.0, result.getValue(2).doubleValue(), 0.0000001d);
+        assertEquals(0.3125, result.getValue("A").doubleValue(), 0.0000001);
+        assertEquals(0.875, result.getValue("B").doubleValue(), 0.0000001);
+        assertEquals(1.0, result.getValue("C").doubleValue(), 0.0000001);
     }
 
     @Test
-    public void testGetCumulativePercentagesSingleValue() {
+    public void getCumulativePercentagesShouldEndAtOneForPositiveValues() {
         DefaultKeyedValues data = new DefaultKeyedValues();
-        data.addValue((Comparable) 0, 10.0);
+        data.addValue("X", 1.0);
+        data.addValue("Y", 2.0);
+        data.addValue("Z", 3.0);
 
         KeyedValues result = DataUtilities.getCumulativePercentages(data);
 
-        assertEquals("Single value cumulative % should be 1.0",
-                1.0, result.getValue(0).doubleValue(), 0.0000001d);
+        assertEquals(1.0, result.getValue("Z").doubleValue(), 0.0000001);
     }
 
     @Test
-    public void testGetCumulativePercentagesTwoEqualValues() {
+    public void getCumulativePercentagesShouldHandleSingleValue() {
         DefaultKeyedValues data = new DefaultKeyedValues();
-        data.addValue((Comparable) 0, 5.0);
-        data.addValue((Comparable) 1, 5.0);
+        data.addValue("A", 10.0);
 
         KeyedValues result = DataUtilities.getCumulativePercentages(data);
 
-        assertEquals("Key 0 cumulative % should be 0.5",
-                0.5, result.getValue(0).doubleValue(), 0.0000001d);
-        assertEquals("Key 1 cumulative % should be 1.0",
-                1.0, result.getValue(1).doubleValue(), 0.0000001d);
+        assertEquals(1.0, result.getValue("A").doubleValue(), 0.0000001);
     }
 
-    @Test
-    public void testGetCumulativePercentagesNullInput() {
-        try {
-            DataUtilities.getCumulativePercentages(null);
-            fail("No exception thrown. The expected outcome was: a thrown "
-                    + "exception of type: IllegalArgumentException");
-        } catch (Exception e) {
-            assertTrue("Incorrect exception type thrown",
-                    e.getClass().equals(IllegalArgumentException.class));
-        }
-    }
-
-    @Test
-    public void testGetCumulativePercentagesLastKeyIsAlwaysOne() {
-        DefaultKeyedValues data = new DefaultKeyedValues();
-        data.addValue((Comparable) 0, 1.0);
-        data.addValue((Comparable) 1, 2.0);
-        data.addValue((Comparable) 2, 3.0);
-        data.addValue((Comparable) 3, 4.0);
-
-        KeyedValues result = DataUtilities.getCumulativePercentages(data);
-
-        assertEquals("Last key cumulative % should always be 1.0",
-                1.0, result.getValue(3).doubleValue(), 0.0000001d);
+    @Test(expected = IllegalArgumentException.class)
+    public void getCumulativePercentagesShouldThrowWhenInputIsNull() {
+        DataUtilities.getCumulativePercentages(null);
     }
 }
