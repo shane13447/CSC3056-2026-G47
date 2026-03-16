@@ -1,3 +1,21 @@
 out/
+bin/
 *.class
 *.jar
+desktop.ini
+Thumbs.db
+.DS_Store
+.vscode/
+.claude/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Lab2: only Java test files belong in the repo
+Lab2/**/*.zip
+Lab2/**/*.pdf
+Lab2/**/*.docx
+Lab2/**/*.xlsx
+Lab2/Lab 2- artifacts/
